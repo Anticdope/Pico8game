@@ -122,22 +122,27 @@ function e1_idle_anim()
 end
 
 function enemy_mov()
-if (plr_x-enm1_x>15 or plr_x-enm1_x<-15
-or plr_y-enm1_y>15 or plr_y-enm1_y<-15) then
-	 if (sgn(enm1_x-plr_x)==-1) then
-	  enm1_x+=1
-	 end
-	 if (sgn(enm1_x-plr_x)==1) then
-	  enm1_x-=1
-	 end
-	 
-	 if (sgn(enm1_y-plr_y)==-1) then
-	  enm1_y+=1
-	 end
-	 if (sgn(enm1_y-plr_y)==1) then
-	  enm1_y-=1
-	 end
-end
+	if ((plr_x<enm1_x+25 and plr_y<enm1_y+25) or
+	(plr_x<enm1_x-25 and plr_y>enm1_y-25)) then
+		 if (sgn(enm1_x-plr_x)==-1) then
+		  enm1_x+=.5
+		 else
+		  e1_delay=1
+		  e1_switch=15
+		  if (e1_delay==1) then
+		  end
+		 end
+		 if (sgn(enm1_x-plr_x)==1) then
+		  enm1_x-=.5
+		 end
+		 
+		 if (sgn(enm1_y-plr_y)==-1) then
+		  enm1_y+=.5
+		 end
+		 if (sgn(enm1_y-plr_y)==1) then
+		  enm1_y-=.5
+		 end
+	end
 end
 -->8
 --controls code
