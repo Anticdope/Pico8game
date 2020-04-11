@@ -13,6 +13,7 @@ player=0
 enemy1=128
 plr_x=32
 plr_y=32
+
 enm1_x=64
 enm1_y=64
 flip_p=false
@@ -32,8 +33,8 @@ function _update()
  plr_mov()
  anim_control()
 	camera_code()
-	getx_move()
 	e1_idle_anim()
+	
 	
 end
 
@@ -42,12 +43,12 @@ end
 function _draw()
 
  cls()
- rect(enm1_x-25,enm1_y-25,enm1_x+25,enm1_y+25,8)
  draw_map()
+ enm1_agg()
  spr(player,plr_x,plr_y,1,1,flip_p)
  debugger()
  spr(enemy1,enm1_x,enm1_y,1,1,flip_e1)
-
+ sset(plr_x,plr_y,rnd(15))
 end
 -->8
 --animation code
@@ -116,9 +117,24 @@ end
 
 function enm1_agg()
 
-	if ((plr_x<enm1_x+25 and plr_y<enm1_y+25) and
+	if ((plr_x<enm1_x+31 and plr_y<enm1_y+31) and
 	(plr_x>enm1_x-25 and plr_y>enm1_y-25)) then
-	 enm1_aggro=true
+	 
+	 rect(enm1_x-25,enm1_y-25,enm1_x+31,enm1_y+31,8)
+	 
+	 if (sgn(enm1_x-plr_x)==1) then
+	  enm1_x-=.5
+	 end
+	 if (sgn(enm1_x-plr_x)==-1) then
+	  enm1_x+=.5
+	 end
+	  if (sgn(enm1_y-plr_y)==1) then
+	  enm1_y-=.5
+	 end
+	 if (sgn(enm1_y-plr_y)==-1) then
+	  enm1_y+=.5
+	 end
+	 
 	end
 
 end
@@ -211,11 +227,8 @@ function debugger()
  print("x: "..flr(plr_x),deb_x+4,deb_y+4,7)
  print("y: "..flr(plr_y),deb_x+4,deb_y+10,7)
  print("♥♥♥♥♥",deb_x+4,deb_y+18,8)
- print("tick "..ticker,deb_x+4,deb_y+30,8)
  print("del  "..delay,deb_x+4,deb_y+36,8)
- print("xagg  "..enm1_xagg,deb_x+4,deb_y+44,8)
- print("yagg  "..enm1_yagg,deb_x+4,deb_y+50,8)
- print("tf  "..tf,deb_x+4,deb_y+56,8)
+ 
 end
 -->8
 --map code
