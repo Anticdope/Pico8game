@@ -3,6 +3,8 @@ version 18
 __lua__
 --game code
 
+
+
 function _init()
 
 delay=0
@@ -13,6 +15,8 @@ plr_x=32
 plr_y=32
 enm1_x=64
 enm1_y=64
+enm1_xagg=sgn(enm1_x-plr_x)
+enm1_yagg=sgn(enm1_y-plr_y)
 flip_p=false
 flip_e1=false
 flip_b=false
@@ -22,6 +26,8 @@ music(0)
 
 end
 
+
+
 function _update()
  
  plr_mov()
@@ -29,7 +35,7 @@ function _update()
 	camera_code()
 	getx_move()
 	e1_idle_anim()
-	enemy_mov()
+	enm1_agg()
 	
 end
 
@@ -38,13 +44,17 @@ end
 function _draw()
 
  cls()
+ rect(enm1_x-25,enm1_y-25,enm1_x+25,enm1_y+25,8)
  draw_map()
  spr(player,plr_x,plr_y,1,1,flip_p)
  debugger()
  spr(enemy1,enm1_x,enm1_y,1,1,flip_e1)
+
 end
 -->8
 --animation code
+
+
 
 function run_anim()
 
@@ -59,6 +69,8 @@ function run_anim()
  
 end
 
+
+
 function idle_anim()
 
  delay-=1
@@ -72,19 +84,16 @@ function idle_anim()
  
 end
 
---attack animation
+
+
 function atk_anim()
 
---counts down delay
  delay-=1
  if (delay<0) then
---sets sprite number
   player=player+1
   if (player>12) then
---resets sprite number
    player=9
   end
---resets delay
  delay=2
  end 
 
@@ -94,22 +103,24 @@ function create_bullet()
  
  bullet=16
  spr(bullet,plr_x+6,plr_y+6,1,1,flip_b)
- 
+
 end
+
+
 
 function getx_move()
 
  x_val=0
- 
  if (ticker<30) then
   ticker+=1
  end
- 
  if (ticker==30) then
   ticker=1
  end
  
 end
+
+
 
 function e1_idle_anim()
 
@@ -119,35 +130,46 @@ function e1_idle_anim()
   if (enemy1>132) then
    enemy1=128
   end
-  edelay=2
+  edelay=2 
  end
+ 
 end
 
-function enemy_mov()
-	if ((plr_x<enm1_x+25 and plr_y<enm1_y+25) or
-	(plr_x<enm1_x-25 and plr_y>enm1_y-25)) then
-		 if (sgn(enm1_x-plr_x)==-1) then
-		  enm1_x+=.5
-		 else
-		  e1_delay=1
-		  e1_switch=15
-		  if (e1_delay==1) then
-		  end
-		 end
-		 if (sgn(enm1_x-plr_x)==1) then
-		  enm1_x-=.5
-		 end
-		 
-		 if (sgn(enm1_y-plr_y)==-1) then
-		  enm1_y+=.5
-		 end
-		 if (sgn(enm1_y-plr_y)==1) then
-		  enm1_y-=.5
-		 end
+
+
+function enm1_agg()
+
+	if ((plr_x<enm1_x+25 and plr_y<enm1_y+25) and
+	(plr_x>enm1_x-25 and plr_y>enm1_y-25)) then
+	 enm1_aggro=true
 	end
+	if (enm1_aggro==true) then
+  enm1_ai()
+	end
+	enm1_aggro=false
+	
+end
+
+
+
+function enm1_ai()
+
+ if (enm1_xagg==1) then
+  enm1_x-=.5 
+ elseif (enm1_xagg==-1) then
+  enm1_x+=.5 
+ end
+ if (enm1_yagg==1) then
+  enm1_y-=.5 
+ elseif (enm1_yagg==-1) then
+  enm1_y+=.5 
+ end
+ 
 end
 -->8
 --controls code
+
+
 
 function plr_mov()
 
@@ -170,7 +192,7 @@ function plr_mov()
  
 end
 
---camera code
+
 
 function camera_code()
 
@@ -178,6 +200,7 @@ function camera_code()
  deb_y=plr_y-64
  
  camera(plr_x-64,plr_y-64)
+ 
 	if (plr_x-64 <0) then
 	 camera(0,plr_y-64)
 	 deb_x=0
@@ -192,25 +215,27 @@ function camera_code()
 	
 end
 
+
+
 function anim_control()
 
-if (btn(4)) then
+	if (btn(4)) then
 	 atk_anim()
 	elseif (btn(5)) then
 	 create_bullet() 
 	else
-	 if (btn(⬆️) or
-	     btn(⬇️) or
-	     btn(⬅️) or
-	     btn(➡️)) then
-					  run_anim()
-					 else
-					  idle_anim()
-					 end
+	 if (btn(⬆️) or btn(⬇️) or btn(⬅️) or btn(➡️)) then
+			run_anim()
+	 else
+			idle_anim()
+	 end
 	end
+	
 end
 -->8
 --debugger
+
+
 
 function debug_mov()
 
@@ -220,13 +245,15 @@ function debug_mov()
  
 end
 
+
+
 function debugger()
 
  print("x: "..flr(plr_x),deb_x+4,deb_y+4,7)
  print("y: "..flr(plr_y),deb_x+4,deb_y+10,7)
  print("♥♥♥♥♥",deb_x+4,deb_y+18,8)
  print("tick "..ticker,deb_x+4,deb_y+30,8)
- print("del  "..delay,deb_x+4,deb_y+36,8)
+ print("del  "..enm1_xagg,deb_x+4,deb_y+36,8)
 
 end
 -->8
